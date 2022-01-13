@@ -7,5 +7,5 @@
 ## 목차
 
 * [스타트캠프](./스타트캠프)
-  * [git](./git)
-  * [markdown](./markdown)
+  * [git](./스타트캠프/git)
+  * [markdown](./스타트캠프/markdown)
