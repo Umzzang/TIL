@@ -1,3 +1,54 @@
+# git
+
+> 분산버전관리시스템(DVCS)
+
+## 1. git 저장소 만들기
+
+```bash
+$ git init
+Initialized empty Git repository in C:/Users/takhe/Desktop/first/.git/
+(master) $
+```
+
+* `.git` 폴더가 생성 => 버전이 기록되는 저장소 
+  * 해당 폴더를 지우게 되면 모든 버전이 삭제되니 주의!
+* `(master)` 
+
+## 버전 기록하기
+
+### add
+
+```bash
+$ git add 파일명 
+$ git add a.txt
+$ git add my_folder/
+$ git add a.txt b.txt
+```
+
+###  commit
+
+````bash
+$ git commit -m '커밋메시지'
+````
+
+* 커밋 메시지는 항상 버전의 내용(변경사항)에 대해서 나타낼 수 있도록 기록한다.
+
+## status
+
+```bash
+$ git status
+```
+
+## log
+
+```bash
+$ git log
+```
+
+
+
+
+
 # 원격 저장소 활용(GitHub)
 
 ## 기초 활용
