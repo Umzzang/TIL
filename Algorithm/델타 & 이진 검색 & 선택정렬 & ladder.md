@@ -1,6 +1,6 @@
 # 달팽이 문제
 
-![snail](d.assets/snail.PNG)
+![snail](델타 & 이진 검색 & 선택정렬 & ladder.assets/snail.PNG)
 
 ​                                                                         <출처: swea 달팽이 숫자>
 
@@ -82,7 +82,7 @@ output 과 내 정답 비교해주는 사이트
 
 ## 선택 정렬
 
-![정렬](d.assets/정렬.PNG)
+![정렬](델타 & 이진 검색 & 선택정렬 & ladder.assets/정렬.PNG)
 
 
 
@@ -107,7 +107,7 @@ for i in range(10):
 
 # 이진 탐색
 
-![SW Expert Academy - Chrome 2022-02-15 오후 8_22_34 (2)](d.assets/SW Expert Academy - Chrome 2022-02-15 오후 8_22_34 (2).png)
+![](델타 & 이진 검색 & 선택정렬 & ladder.assets/bsearch.png)
 
 ​                                      <출처: swea 이진탐색 문제>
 
@@ -147,7 +147,7 @@ for test_case in range(1, T + 1):
 
 # ladder
 
-![ladder](d.assets/ladder.PNG)
+![ladder](델타 & 이진 검색 & 선택정렬 & ladder.assets/ladder.PNG)
 
 <출처 : swea ladder1 문제>
 
