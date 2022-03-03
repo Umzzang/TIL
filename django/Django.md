@@ -1,5 +1,16 @@
 # Django 처음 시작하기
 
+## 관련 문서 정리
+
+| 개념              | 링크                                                         | 비고     |
+| ----------------- | ------------------------------------------------------------ | -------- |
+| render            | https://docs.djangoproject.com/ko/3.2/topics/http/shortcuts/#render | views    |
+| request object    | https://docs.djangoproject.com/en/3.2/ref/request-response/  | views    |
+| URL               | https://docs.djangoproject.com/ko/3.2/topics/http/urls/#path-converters | url      |
+| template tag      | https://docs.djangoproject.com/en/3.2/ref/templates/builtins/ | template |
+| HTTP              | https://developer.mozilla.org/ko/docs/Web/HTTP               | HTTP     |
+| template settings | https://docs.djangoproject.com/en/4.0/ref/settings/#templates | settings |
+
 
 
 ### Static web page
@@ -415,4 +426,9 @@ setttings.py 에서 템플릿 추가
 
 
 
-풀한 장고 서버 실행하려면 어떻게 해야 하나요??
+pull한 장고 서버 실행하려면 어떻게 해야 하나요??
+
+
+
+
+
