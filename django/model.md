@@ -36,7 +36,7 @@
 
 
 
-### ### PK(Primary Key) 기본키는 레코드를 나타내는 고유값 ### ###
+### ### PK(Primary Key) 기본키는 레코드를 나타내는 고유값 ###
 
 ### ### django에서 id로 알아서 생성됨 ###
 
@@ -176,6 +176,18 @@ class Article(models.Model):
 1. 객체 지정
 
 >>> article = Article()
+>>> article.title = 'first'
+>>> article.content = 'django!'
+>>> article.save()
+
+2.
+
+>>> article = Article(title='second', content='django!!')
+>>> article.save()
+
+3.
+
+>>> Article.objects.create(title='third', content='django!')
 
 
 ```
@@ -192,17 +204,46 @@ class Article(models.Model):
 <QuerySet []>
 ```
 
+```
+all()
+get(pk=2)
+get(title='first')
+filter(title='first')
+```
+
+* get 은 DoesNotExist, MultipleObjectsReturned 예외가 존재함. -> 고유값으로 찾아라!
+
 
 
 ### Update
+
+```
+>>> article = Article.objects.get(pk=1)
+>>> article.title = 'byebye'
+>>> article.save()
+```
+
+
 
 
 
 ### Delete
 
+```
+>>> article = Article.objects.get(pk=1)
+>>> article.delete()
+```
 
 
 
+### Field lookups
+
+```
+Article.objects.filter(pk__gt=2)
+Article.objects.filter(content__contains='ja')
+```
+
+* 조회 시 특정 검색 조건을 지정할 수 있다.
 
 
 
@@ -227,3 +268,41 @@ method get
 
 
 2. html !tap 했을 때 설정하는 언어랑 뭐가 다른건지
+
+
+
+
+
+a1 , a2 에 같은 클래스 인스턴스로 만들어주고
+
+
+
+하나 삭제하면 어케되나??
+
+
+
+
+
+Q. def create 에서
+
+render 'artkcles/index.html' 하면 게시판안보임;;
+
+
+
+-> 단순히 html 을 보여주냐??? 아니면 url 을 거쳤다가 그 view를 통해 html 을 보여주냐 차이네!
+
+
+
+
+
+index.html 에서 
+
+```html
+<a href={% url 'articles:detail' article.pk % }></a>
+
+```
+
+```
+article.pk 를 넣어준 이유 : articles:detail url 에서 <ink:pk> 를 받기 때문
+```
+
