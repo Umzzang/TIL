@@ -99,6 +99,8 @@
 * git revert
 * git branch
 * git stash
+* git switch
+* git restore
 
 
 
@@ -149,6 +151,8 @@ $ git add 파일명
 * git log -p : commit과 commit 사이의 source 차이를 확인 가능
   * -가 이전버전
   * +가 이후 버전
+* git log --oneline
+* git log --oneline --all
 
 
 
@@ -206,6 +210,15 @@ $ gistory
 > 새로운 가지를 만드는 과정
 
 * git 의 branch 기능은 다른 서버관리툴보다 가볍고, 쓰기 편하다.
+
+
+
+* `git branch` : 목록
+* `git branch 브랜치이름` : 생성
+* `git branch -d 브랜치이름` : 삭제
+* `git branch -D 브랜치이름` : 합병 없어도 삭제
+* `git switch 브랜치이름` : 이동
+* `git switch -c 브랜치이름` : 생성 후 이동 
 
 
 
@@ -337,6 +350,10 @@ $ git log --branches --decorate --graph --oneline
 ```
 
 ![image-20220309234225408](git.assets/image-20220309234225408.png)
+
+
+
+
 
 
 
