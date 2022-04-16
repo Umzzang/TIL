@@ -584,7 +584,7 @@ $ git reset [옵션] <커밋 ID>
    $ git reset --soft 6baf
    ```
 
-   [![soft](../../../../../s07/python/git/-/raw/master/04_reset_revert.assets/soft.png)]()
+   ![soft](git.assets/soft.png)
 
 2. `--mixed`
 
@@ -592,7 +592,7 @@ $ git reset [옵션] <커밋 ID>
    $ git reset 6baf
    ```
 
-   [![mixed](../../../../../s07/python/git/-/raw/master/04_reset_revert.assets/mixed.png)]()
+   ![mixed](git.assets/mixed.png)
 
 3. `--hard`
 
@@ -600,13 +600,15 @@ $ git reset [옵션] <커밋 ID>
    $ git reset --hard 6baf
    ```
 
-   [![hard](../../../../../s07/python/git/-/raw/master/04_reset_revert.assets/hard.png)]()
+   ![hard](git.assets/hard.png)
 
-- 옵션 한눈에 보기 [![Snipaste_2022-01-07_16-35-29](../../../../../s07/python/git/-/raw/master/04_reset_revert.assets/Snipaste_2022-01-07_16-35-29.png)]()
+- 옵션 한눈에 보기 
+
+![Snipaste_2022-01-07_16-35-29](git.assets/Snipaste_2022-01-07_16-35-29.png)
 
 - 그림으로 이해하는 `git reset`
 
-  [![reset](../../../../../s07/python/git/-/raw/master/04_reset_revert.assets/reset.png)]()
+  ![reset](git.assets/reset.png)
 
 > 이전 커밋으로 돌아가고, 돌아간 커밋 이후의 내역은 사라집니다.
 
@@ -672,11 +674,11 @@ $ git revert <커밋 ID>
 
 - second 커밋에서 있었던 `2.txt`가 사라진 것을 확인(second 커밋을 없었던 일로 만든 것)
 
-  [![Snipaste_2022-04-15_03-07-39](../../../../../s07/python/git/-/raw/master/04_reset_revert.assets/Snipaste_2022-04-15_03-07-39.png)]()
+  ![Snipaste_2022-04-15_03-07-39](git.assets/Snipaste_2022-04-15_03-07-39.png)
 
 - 그림으로 이해하는 `git revert`
 
-  [![revert_](../../../../../s07/python/git/-/raw/master/04_reset_revert.assets/revert_.png)]()
+  ![revert_](git.assets/revert_.png)
 
 > 이전 커밋을 취소했다는 새로운 커밋을 생성합니다. (이전 커밋은 그대로 살아있습니다.)
 
