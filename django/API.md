@@ -356,7 +356,7 @@ def article_json_3(request):
 
 ### 'many' argument
 
-> default : many=True
+> default : many=False => modelserializer 와 listserializer 는 다르다.
 >
 > 단일 인스턴스가 아닌 QuerySet 을 직렬화하기 위해서는 many=True
 
@@ -364,6 +364,21 @@ def article_json_3(request):
 
 
 
+### 'raise_exception'
+
+> "Raising an exception on invalid data"
+>
+> is_valid() 의 인자로 사용 
+>
+> serializers.ValidationError 예외 발생
+
+* raise_exception=False
+
+![image-20220421141254333](API.assets/image-20220421141254333.png)
+
+* raise_exception=True
+
+![image-20220421141316430](API.assets/image-20220421141316430.png)
 
 
 
@@ -371,12 +386,116 @@ def article_json_3(request):
 
 
 
+## 1:N
+
+
+
+### save()
+
+> save() 단계에서 참조하는 모델의 객체 정보가 필요함.
+>
+> save(article=article) 과 같이 save 안에서 해결 가능 
+
+
+
+from ~ 경로  import   대문자: 클래스 , 소문자: 함수 , .찍고 사용하면 파일명 전체 
 
 
 
 
 
+### Read Only Field(읽기 전용 필드)
 
+```python
+# articles/views.py
+
+@api_view(['POST'])
+def comment_create(request, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    serializer = CommentSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(article=article)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+```
+
+
+
+```
+Comment class 를 serialize 할때 article field는 지정되지 않음
+=> save 할 때 넣어 준것이기 때문
+=> is_valid를 통과하지 못하고 직렬화 과정에도 들어가지 못함.
+=> 읽기 전용 필드로 넣어주어야 함.
+```
+
+![image-20220421150312278](API.assets/image-20220421150312278.png)
+
+```python
+# articles/serializers.py
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ('article',)
+```
+
+![image-20220421150443074](API.assets/image-20220421150443074.png)
+
+
+
+
+
+### 1:N Serializer
+
+> 기존 필드 override  or   추가 필드 구성
+>
+> 1. PrimaryKeyRelatedField     
+> 2. Nested relationships
+
+1. PrimaryKeyRelatedField     
+
+* comment_set 값은 form-data로 받지 않기 때문에 read_only=True
+* 필드가 to many relationships(N) 을 나타내는 경우 many=True
+  * 여기서는 Article 하나에 여러개의 Comment
+
+![image-20220421153615059](API.assets/image-20220421153615059.png)
+
+```
+=> comment_set 필드 명은 models.py class Comment 에서 article 필드명의 related_name 값을 그대로 가져와야 함.
+=> 단순히 comment_id 값만 출력됨
+```
+
+
+
+2. Nested relationships
+
+![image-20220421154221283](API.assets/image-20220421154221283.png)
+
+```
+=> comment_set = CommentSerializer()를 가져옴
+=> class 선언 순서 중요 
+=> Article 조회하면, comment_set 항목에 comment 정보들이 다 담겨있음
+=> comment_set 은 모델간의 관계로 인해 fields 옵션을 커스텀 할 필요가 없음.
+
+```
+
+
+
+3. 추가 필드 구성 
+
+* 모델 관계에 의한 필드가 아닌 추가 필드는 field 커스텀 필요
+
+![image-20220421154820924](API.assets/image-20220421154820924.png)
+
+* 'source'
+  * 필드를 채우는데 사용 할 속성이름
+  * dot을 통해 comment_set 의 속성 사용
+  * .count() 는 built-in Queryset API
+
+### override 혹은 추가한 필드의 경우 read_only_fields 로 하는 것이 아니라 각각 read_only=True 넣어주어야 함.
+
+ 
 
 
 
