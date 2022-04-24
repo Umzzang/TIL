@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+  <h1>프로필</h1>
+  {% if user.img %}
+  <img src={{ user.img.url }} alt="">
+  {% endif %}
+  {{ user.username }}
+  <a href={% url 'accounts:update' %}>회원수정</a>
+  <a href={% url 'accounts:password_change' %}>비밀번호 수정</a>
+
+  <form action={% url 'accounts:follow' user.pk %} method="POST">
+    {% csrf_token %}
+    <input type="submit" value="팔로우">
+  </form>
+  <span>
+   팔로워: {{ user.followers|length }}
+  </span>
+  <span>
+    팔로우: {{ user.following|length }}
+   </span>
+    
+  {% endblock content %}
