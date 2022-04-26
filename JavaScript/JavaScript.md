@@ -410,19 +410,214 @@ for (let fruit of fruits) {
 
 
 
+## 함수
+
+> JavaScript의 함수는 일급 객체!!
+
+### 일급 객체
+
+* 변수에 할당 가능
+* 함수의 매개변수로 전달 가능 (콜백)
+* 함수의 반환 값으로 사용 가능
+* 파이썬의 데코레이터
+
+
+
+### 기본 인자
+
+* 인자 안에 = 으로 default 값 지정 가능 
+
+```javascript
+const greeting = function (name='YK') {
+    return `Hi ${name}`
+}
+greeting()  //Hi YK
+```
+
+
+
+### ### 문자열 안에 변수 넣고 싶으면 ''  가 아니라 ``로 해야함 ###
+
+
+
+### 매개변수와 인자 개수 불일치
+
+* 매개변수 < 인자의 개수
+
+```javascript
+const threeArgs = function(arg1, arg2, arg3) {
+    return [arg1, arg2, arg3]
+}
+threeArgs()      //[undefined, undefined, undefined]
+threeArgs(1)	 //[1, undefined, undefined]
+threeArgs(1,2)	 //[1, 2, undefined]
+```
+
+* 매개변수 > 인자의 개수
+
+```javascript
+const noArgs = function() {
+    return 0
+}
+noArgs(1,2,3)   // 0
+
+const twoArgs = function (arg1, arg2) {
+    return [arg1, arg2]
+}
+twoArgs(1,2,3)   //[1, 2]
+```
+
+
+
+### Operator
+
+* Rest operator (python의 *arg) => 묶어주는 애 (pack)
+
+```javascript
+const restOpr = function (arg1, arg2, ...restArgs) {
+    return [arg1, arg2, restArgs]
+}
+restOpr(1,2,3,4,5) // [1,2, Array(3)] => 자세히보기 하면 array 볼 수 있음.
+            
+```
+
+* Spread operator => unpack
+
+``` javascript
+const spreadOpr = function (arg1, arg2, arg3) {
+    return arg1 + arg2 + arg3
+}
+const numbers = [1,2,3]
+spreadOpr(...number)  // 6  => 리스트 안의 값 3개를 풀어서 넣어줌
+```
 
 
 
 
 
+### 함수 선언식 (declaration)
+
+> 함수의 이름과 함께 정의 하는 방식
+
+
+
+```javascript
+add(2, 7)   //9  => 호이스팅 가능(호출 이후 선언 가능)
+
+function add (num1, num2) {
+    return num1 + num2
+}
+add(3, 4)  //7
+```
+
+
+
+### 함수 표현식 (function expression)
+
+> 함수를 표현식*내에서 정의하는 방식
+>
+> 표현식 : 어떤 하나의 값으로 결정되는 코드의 단위 
+
+* 익명함수로 표현 가능 : 이름이 없는 함수 
+
+```javascript
+add(2, 7)  // Uncaught ReferenceError => 선언 후 호출해야함. 호이스팅 x
+
+const add = function (num1, num2) {
+    return num1 + num2
+}
+add(3, 4)    //7 
+```
 
 
 
 
 
+### Arror Function
+
+> 함수를 비교적 간결하게 정의할 수 있는 문법
+
+> fucntion 키워드 생략 가능
+
+```javascript
+const arrow = function(name) {
+    return `hello, ${name}`
+}
+// function 키워드 삭제
+const arrow = (name) => {return `hello, ${name}`}
+// 매개변수 1개일 때 () 삭제
+const arrow = name => {return `hello, ${name}`}
+// 바디부분 return 포함한 표현식 1개일 경우 {} & return 삭제 가능 
+const arrow = name => return `hello, ${name}`
+
+```
 
 
 
 
 
+## 문자열
+
+
+
+### string.includes(value)
+
+* string에 value가 존재하는지 판별 후 참 또는 거짓 반환
+
+```javascript
+const str = 'a santa at nasa'
+
+str.includes('santa')   // true
+str.includes('asan')    // false
+```
+
+
+
+### string.split(value)
+
+* value가 없을 경우, 기존 문자열을 배열에 담아 반환
+* value가 빈 문자열일 경우 각 문자로 나눈 배열을 반환
+* value가 기타 문자열일 경우, 해당 문자열로 나눈 배열을 반환
+
+```javascript
+const str = 'a cup'
+
+str.split()   // ['a cup']
+str.split('') // ['a','','c','u','p']
+str.split(' ')// ['a', 'cup']
+```
+
+
+
+### string.replace(from, to)   string.replaceAll(form, to)
+
+* replace : string에 from 값이 존재할 경우, 1개만 to로
+* replaceAll : string에 from 모든 값을 to로 교체하여 반환
+
+```javascript
+const str = 'a b c d'
+
+str.replace(' ', '-')		// 'a-b c d'
+str.replaceAll(' ', '-')	// 'a-b-c-d'
+```
+
+
+
+### string.trim() , string.trimStart()  , string.trimEnd()
+
+* 시작과 끝의 모든 공백 제가,  문자열 시작 앞부분 공백 제거,  문자열 뒷부분 공백 제거
+
+```javascript
+const str = '       he   llo       '
+
+str.trim()				// 'he   llo'
+str.trimStart()			// 'he   llo       '
+str.trimEnd()			// '       he   llo'
+```
+
+
+
+
+
+## 배열(Arrays)
 
