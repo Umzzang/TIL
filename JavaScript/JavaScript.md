@@ -621,3 +621,243 @@ str.trimEnd()			// '       he   llo'
 
 ## 배열(Arrays)
 
+> 모양은 리스트 , 배열 이지만 타입은 객체(object)
+
+* -index 접근 불가
+* 키(인덱스), 속성(값) => 객체
+
+
+
+| 메서드          | 설명                                      | 비고                     |
+| --------------- | ----------------------------------------- | ------------------------ |
+| reverse         | 배열 요소 순서 반대로 정렬                |                          |
+| push & pop      | 배열 **가장 뒤**에 요소 추가 또는 제거    |                          |
+| unshift & shift | 배열 **가장 앞**에 요소 추가 또는 제거    |                          |
+| includes        | 배열의 특정 값 존재하는지 판별            |                          |
+| indexOf         | 특정 값 존재 판별 후 인덱스 반환          | 요소 없으면 -1 반환      |
+| join            | 배열의 모든 요소를 구분자를 이용하여 연결 | 구분자 생략 시 쉼표 기준 |
+
+
+
+
+
+### 콜백 메서드
+
+| 메서드  | 설명                                                         | 비고         |
+| ------- | ------------------------------------------------------------ | ------------ |
+| forEach | 배열의 각 요소에 대해 콜백 함수 한번씩 실행                  | 반환 값 없음 |
+| map     | 콜백 함수의 반환 값을 요소로 **새로운 배열** 반환            |              |
+| filter  | 콜백 함수의 반환 값이 참인 요소들만 모아 **새로운 배열** 반환 |              |
+| reduce  | 콜백 함수의 반환 값들을 하나의 **값(acc)에 누적** 후 반환    | 인자 2개     |
+| find    | 콜백 함수의 반환 값이 참이면 해당 요소 반환                  |              |
+| some    | 배열의 **요소 중 하나라도** 판별 함수를 통과하면 참을 반환   |              |
+| every   | 배열의 **모든 요소**가 판별 함수를 통과하면 참을 반환        |              |
+
+
+
+## 객체 (Object)
+
+> 객체는 속성의 집합이며, 중괄호 내부에 key 와 value의 쌍으로 표현한다.
+
+* key 는 문자열 타입만 가능 => key이름에 띄어쓰기 등의 구분자 있으면 따옴표로 묶어서 표현
+* value는 모든 타입(함수 포함) 가능 => 함수면 메서드
+* 객체 요소 접근은 점 또는 대괄호로 가능 => key이름에 띄어쓰기 같은 구분자 있으면 대괄호접근만 가능
+
+* 메서드 내부에서 this 키워드는 객체를 의미함
+
+```javascript
+const me = {
+    firstName : 'John',
+    lastName : 'Doe',
+    fullName : this.firstName + this.lastName
+    getFullName : function () {
+        return this.firstName + this.lastName
+    }
+	'samsung products' : {
+        buds : 'Galaxy Buds',
+        galaxy : 'Galaxy s8'
+    }
+}
+console.log(me['samsung products'].buds) => 대괄호로만 접근 가능
+fullName 은 함수가 아니므로 정상출력 되지 않음  => NaN
+
+```
+
+
+
+### 속성명 축약
+
+> 객체 정의할 때 key와 할당되는 변수의 이름이 같으면 축약 가능
+
+```javascript
+const books = ['JS', 'PYTHON']
+const magazines = ['Vogue', 'Science']
+
+const bookShop = {
+    books,
+    magazines
+}
+```
+
+
+
+### 메서드명 축약
+
+> 메서드 선언 시 function 키워드 생략 가능
+
+```javascript
+const obj = {
+    greeting() {
+        console.log('Hi')
+    }
+}
+obj.greeting()  // Hi
+```
+
+
+
+### 계산된 속성
+
+> 객체를 정의할 때 key 의 이름을 표현식을 이용하여 동적으로 생성 가능
+
+```javascript
+const key = 'regions'
+const value = ['광주', '서울', '부산']
+
+const ssafy = {
+    [key] : value,
+}
+console.log(ssafy)		   // {regions: Array(3)}
+console.log(ssafy.regions) // ['광주', '서울', '부산']
+```
+
+
+
+### 구조 분해 할당
+
+> 배열 또는 객체를 분해하여 속성을 변수에 쉽게 할당할 수 있는 문법
+
+```javascript
+const userInfor = {
+    name : 'ssafy Kim',
+    userId : 'ssafyStudent',
+    phoneNumber : '010-1234-1234'
+}
+
+const {name} = userInfor
+const {userId} = userInfor
+const {name, phoneNumber} = userInfor
+```
+
+
+
+### JSON
+
+> JavaScript Object Notation
+
+* key-value 쌍의 형태로 데이터를 표기하는 표준 포맷
+* 자바스크립트의 객체와 유사하게 생겼으나 실제는 문자열 타입
+* => 문자열 타입이기 때문에 JS 객체로써 조작하기 위해 구문분석(Parsing) 필수
+
+* JSON.parse()
+  * JSON => 자바스크립트 객체
+* JSON.stringify()
+  * 자바스크립트 객체 => JSON
+
+
+
+## this
+
+> 실행 문맥에 따라 다른 대상을 가리킴
+>
+> 파이썬의 self 와 비슷
+>
+> 객체.메서드명()으로 호출 가능 => this는 해당 메서드가 소속된 객체를 가리킴
+>
+> 최상위 객체는 window 
+
+```javascript
+const obj = {
+    PI : 3.14,
+    radiuses : [1,2,3,4,5],
+    printArea : function () {
+        this.radiuses.forEach(function (r){
+            console.log(this.PI*r*r)
+        }.bind(this))
+    },
+}
+```
+
+```
+this.radiuses.forEach 는 객체.객체.메서드 이므로 정상 접근가능
+forEach 안에 콜백 함수는 this 정상 접근 불가능  => window로 잡힘
+그래서 bind(this)
+```
+
+* 화살표 함수
+
+```javascript
+const obj = {
+    PI : 3.14,
+    radiuses : [1,2,3,4,5],
+    printArea : function () {
+        this.radiuses.forEach( r => console.log(this.PI * r * r)
+        )
+    }
+}
+```
+
+
+
+## lodash
+
+> 모듈성, 성능 및 추가 기능을 제공하는 JavaScript 유틸리티 라이브러리
+
+![image-20220427173312321](JavaScript.assets/image-20220427173312321.png)
+
+```
+script 안에 부트스트랩처럼 넣어주고 사용 가능
+```
+
+
+
+
+
+
+
+## History
+
+
+
+### 크로스 브라우징 (Cross Browsing)
+
+> 브라우저마다 각기 다른 자체 자바스크립트 언어를 사용하게 됨.
+>
+> 브라우저마다 다른 방식의 언어, 코딩이 필요해지면서 웹 표준 필요성 제기
+
+
+
+### ECMA 탄생
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
