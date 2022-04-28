@@ -238,6 +238,69 @@ colorInput.addEventListener('input', function(event) {
 
 
 
+### element속성 style, class
+
+> 모두 인라인에 작성된 것들만 가져온다.
+
+* head나 css파일을 만들어줘서 참조하는 style은 가져오지 못한다.
+* 전체 style 가져오고 싶으면 window.getComputedStyle 사용 가능 
+
+```javascript
+li1.addEventListener('click', function (event){
+    const li1style = window.getComputedStyle(event.target)
+    body.style.backgroundColor = li1style.backgroundColor
+})
+```
+
+
+
+
+
+## *body에 이미지 넣기*
+
+* 0428 workshop 05
+
+```javascript
+const body = document.querySelector('body')
+const random = _.random(1,6)
+body.style.backgroundImage = `url(images/${random}.jpg)`
+```
+
+
+
+
+
+## Date()
+
+> JavaScript **`Date`** 객체는 시간의 한 점을 플랫폼에 종속되지 않는 형태로 나타냅니다. `Date` 객체는 1970년 1월 1일 UTC(협정 세계시) 자정과의 시간 차이를 밀리초로 나타내는 정수 값을 담습니다.
+
+>  https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Date
+
+* 원하는 방식으로 출력 (HH:MM:SS)
+
+```javascript
+const displayTime = function () {
+      // 2. 아래 now를 활용하여 timeDiv의 innerText를 적절하게 re-format
+      const now = new Date()
+      let hour = now.getHours()
+      const minute = now.getMinutes().toString().padStart(2,'0')
+      const second = now.getSeconds().toString().padStart(2,'0')
+      console.log(typeof(hour))
+      if (hour >= 12) {
+        hour -= 12
+        timeDiv.innerText = `오후 ${hour.toString().padStart(2,'0')}:${minute}:${second}`
+      } else {
+        timeDiv.innerText = `오전 ${hour.toString().padStart(2,'0')}:${minute}:${second}`
+      }
+    }
+    // 1초에 한번 displayTime 함수 실행
+setInterval(displayTime, 1000)
+```
+
+
+
+
+
 
 
 ## Event 취소
