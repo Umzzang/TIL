@@ -67,3 +67,42 @@ PasswordChangeForm 의 부모인 SetPasswordForm
         super().__init__(*args, **kwargs)
 
   form.user 로 사용 가능 
+
+
+
+
+api 랑 일반 출력 url 같이 지정하면 안되나??
+
+
+through 공부 하고 
+
+
+# 프로젝트 github에 올렸는데 메일을 받음 = > SECRET_KEY
+
+settings.py => SCRET_KEY
+
+github 에 key는 올리면 안된다~!!!
+
+gitignore 에 django를 추가해도 secret key는 settings에 추가되서 자연스럽게 올라감.
+=> 분리해줄 필요가 있음 
+
+새로운 key 는 Django Secret Key Generator 로 생성해서 넣어줌 
+
+```python```
+# settings.py
+
+secret_file = os.path.join(BASE_DIR, 'secrets.json')
+
+with open(secret_file) as f:
+    secrets = json.loads(f.read())
+
+def get_secret(setting, secrets=secrets):
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+
+SECRET_KEY = get_secret("SECRET_KEY")
+
+
