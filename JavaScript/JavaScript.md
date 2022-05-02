@@ -263,6 +263,9 @@ const b = '1004'
 console.log(a === b)  // false => 암묵적 타입 변환
 
 console.log(a == b)  // True => 엄격한 비교 
+
+// 다르다  !== 로 표현
+a !== b           // true 
 ```
 
 
@@ -747,6 +750,14 @@ const userInfor = {
 const {name} = userInfor
 const {userId} = userInfor
 const {name, phoneNumber} = userInfor
+
+
+function printUser({ name, userId, phoneNumber } = userInfor) {
+	console.log(name, userId, phoneNumber)
+}
+
+
+
 ```
 
 
@@ -774,7 +785,7 @@ const {name, phoneNumber} = userInfor
 >
 > 객체.메서드명()으로 호출 가능 => this는 해당 메서드가 소속된 객체를 가리킴
 >
-> 최상위 객체는 window 
+> 최상위 객체는 window  => 메서드가 아닌 곳에서 this 는 window
 
 ```javascript
 const obj = {
