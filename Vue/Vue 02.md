@@ -285,17 +285,102 @@ export default {
 
 
 
+## Vue Router
+
+> SPA 등장이전에는 모든 요청 경로를 서버가 통제(서버가 라우팅)
+>
+> SPA 등장이후 하나의 index.html만 제공 => CSR, 즉 라우팅에 대한 결정권을 클라이언트쪽으로
+
+
+
+### Vue Router 시작하기
+
+```bash
+$ vue add router
+```
+
+![image-20220510204549974](Vue 02.assets/image-20220510204549974.png)
+
+
+
+![image-20220510204625080](Vue 02.assets/image-20220510204625080.png)
+
+
+
+### index.js
+
+* 라우트에 관련된 정보 및 설정이 작성되는 곳 
+
+![image-20220510204703035](Vue 02.assets/image-20220510204703035.png)
+
+
+
+### router-link
+
+* 사용자 네비게이션을 가능하게 하는 컴포넌트
+
+* 기존 a태그에서 기본이벤트를 제거한 형태
+
+
+
+### router-view
+
+* 주어진 라우트에 대해 일치하는 컴포넌트를 렌더링하는 컴포넌트
+* 실제 componen가 DOM에 부착되어 보이는 자리를 의미
+
+
+
+### Named Routes
+
+* 이름을 가지는 라우트 (장고의 url naming과 비슷)
+
+```vue
+<router-link :to={ name:'home '}>Home</router-link>
+```
+
+
+
+### 프로그래밍 방식
+
+> router-link 사용하지 않고 router의 인스턴스 메서드를 사용하는 방식
+>
+> $router.push(...)
+
+| 선언적 방식             | 프로그래밍 방식   |
+| ----------------------- | ----------------- |
+| \<router-link to="..."> | $router.push(...) |
+
+
+
+### Dynamic Route Matching
+
+* 동적 인자 전달 => 동적인자는 :으로 전달
+
+| pattern                            | matched path          | $route.params                           |
+| ---------------------------------- | --------------------- | --------------------------------------- |
+| /user/:userName                    | /user/john            | { username: 'john'}                     |
+| /user/:userName/article/:articleId | /user/john/article/12 | { username: 'john',<br />articleId: 12} |
+
+
+
+## Components vs views
+
+* App.vue
+  * 최상위 컴포넌트
+* views/
+  * router(index.js)에 매핑되는 컴포넌트를 모아두는 폴더
+* components/
+  * router에 매핑된 컴포넌트 내부에 작성하는 컴포넌트를 모아두는 폴더
 
 
 
 
 
+### Environment Variable
 
+> API 키 환경변수 설정하기 => git에 push할 때 대비 (django의 secret key 같은 느낌)
 
+![image-20220510210048279](Vue 02.assets/image-20220510210048279.png)
 
-
-
-
-
-
-
+* 프로젝트 최상단에 .env.local 배치
+* 변수 명은 'NODE_ENV', 'BASE_URL', 'VUE_APP_'으로 시작해야 함.
