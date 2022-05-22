@@ -602,3 +602,30 @@ vue에서 장고로 줄수있는건 url 뿐
 
 
 
+## 0521
+
+vue  => django   csrf token 
+
+https://vsupalov.com/avoid-csrf-errors-axios-django/
+
+https://axios-http.com/kr/docs/req_config
+
+
+
+django 와 vue 쪽의 토큰 명칭이 다름. 통일 필요 
+
+
+
+
+
+image
+
+https://velog.io/@kyungjune/axios%EB%A1%9C-image-%EC%97%85%EB%A1%9C%EB%93%9C%ED%95%98%EA%B8%B0
+
+https://www.bezkoder.com/vue-axios-file-upload/
+
+https://stackoverflow.com/questions/49434403/how-do-i-upload-a-file-from-axios-to-django
+
+
+
+https://stackoverflow.com/questions/39663961/how-do-you-send-images-to-node-js-with-axios
