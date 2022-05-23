@@ -629,3 +629,19 @@ https://stackoverflow.com/questions/49434403/how-do-i-upload-a-file-from-axios-t
 
 
 https://stackoverflow.com/questions/39663961/how-do-you-send-images-to-node-js-with-axios
+
+
+
+
+
+
+
+prop 으로 받아온 건 수정 xxx
+
+
+
+
+
+csrf 문제
+
+https://localcoder.org/django-forbidden-csrf-cookie-not-set
