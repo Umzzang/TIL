@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vanilla Challenge</title>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <h1>Random Number Game</h1>
+    <h3>
+      Generate a number between 0 and
+      <input min="0" id="maxNum" type="number" />
+    </h3>
+    <p>
+      Guess the number:
+      <input id="yourNum" type="number" max="{maxNum}" />
+      <button>Play!</button>
+    </p>
+    <p id="result"></p>
+    <script src="app.js"></script>
+  </body>
+</html>
