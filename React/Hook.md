@@ -71,6 +71,117 @@ useEffect(() => {
 
 
 
+* useContext
+
+> context 는 전역변수를 조금더 쉽게 활용하기 위해서 사용함
+
+* props 만 사용한다면 
+
+![image-20221030111006229](Hook.assets/image-20221030111006229.png)
+
+* context를 사용했을 때
+
+![image-20221030111053251](Hook.assets/image-20221030111053251.png)
+
+
+
+```react
+export default function App() {
+    const [isDark, setIsDark] = useState(false);
+    
+    return <Page isDark={isDark} setIsDark={setIsDark} />;
+}
+
+export default Page({isDark, setIsDark}) {
+    return (
+        <div className="page">
+            <Header isDark={isDark}></Header>
+            <Content isDark={isDark}></Content>
+            <Footer isDark={isDark} setIsDark={setIsDark}></Footer>
+        </div>
+    )
+}
+
+
+// context 사용
+export default function App() {
+    const [isDark, setIsDark] = useState(false);
+    
+    return (
+        <ThemeContext.Provider value={{ isDark, setIsDark }}>
+            <Page/>;
+        </ThemeContext.Provider>
+}
+
+export default Page() {
+    return (
+        <Header ></Header>
+        <Content ></Content>
+        <Footer ></Footer>  
+    )
+}
+
+export default Header () {
+    const { isDark } = useContext(ThemeContext);
+    
+    return(
+    	<header>
+            <h1>하이</h1>
+        </header>
+    )
+}
+```
+
+
+
+* useMemo
+
+> component 최적화를 위해 (성능 향상)
+>
+> useEffect와 실행 시기는 같지만 새 값을 메모이제이션한다.
+>
+> 메모이제이션된 **'값'** 반환
+
+ 
+
+* useCallback
+
+> 콜백함수, 의존성 배열을 인자로 받음
+>
+> **함수이름이 같다고 같은함수가 아님!** => 함수 저장한 위치변경이 없어야함
+>
+> 메모이제이션된 **'함수'** 반환
+
+
+
+* useReducer
+
+> 일반적으로 state(상태)가 previous state(이전 상태)에 크게 의존하거나 state(상태)가 매우 복잡한 경우 useReducer를 사용하는 것이 좋음
+
+
+
+
+
+## Custom Hooks
+
+> 함수를 하나 만드는 것과 같다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
