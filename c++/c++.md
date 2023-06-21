@@ -823,6 +823,8 @@ int main() {
 > 클래스 = 자료 저장 + 자료 처리 = 변수 + 함수 를 모아 둔 틀(자료형)
 >
 > 객체(오브젝트) : 틀(클래스)를 이용하여 찍어낸 객체(변수, 메모리 상의 공간)
+>
+> 구조체와 클래스의 선언은 메모리를 할당받지 않는다.
 
 
 
@@ -924,11 +926,571 @@ int main() {
 
 
 
+### static member
+
+> 변하지 않는 멤버 <-> 동적멤버
+>
+> 클래스에 대한 멤버 : 인스턴스에 대한 멤버가 아님
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class Color {
+public:
+    Color () : r(0), g(0), b(0) {}
+    Color (float r, float g, float b) : r(r), g(g), b(b) {}
+
+    float GetR() {return r;}
+    float GetG() {return g;}
+    float GetB() {return b;}
+
+
+private:
+    float r;
+    float g;
+    float b;
+};
+
+Color MixClors(Color a, Color b) {
+    return Color((a.GetR() + b.GetR())/2, (a.GetG() + b.GetG())/2, (a.GetB() + b.GetB())/2);
+}
+
+int main() {
+    Color blue(0, 0, 1);
+    Color red(1, 0, 0);
+
+    Color purple = MixClors(blue, red);
+    cout << "r=" << purple.GetR() << "g=" << purple.GetG() << "b=" << purple.GetB() << endl;
+
+}
+```
+
+=> MixClors 를 class 안으로 넣으면 아래와 같아짐
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class Color {
+public:
+    Color () : r(0), g(0), b(0) {}
+    Color (float r, float g, float b) : r(r), g(g), b(b) {}
+
+    float GetR() {return r;}
+    float GetG() {return g;}
+    float GetB() {return b;}
+
+    static Color MixClors(Color a, Color b) {
+        return Color((a.r + b.r)/2, (a.g + b.g)/2, (a.b + b.b)/2);
+    }
+private:
+    float r;
+    float g;
+    float b;
+};
+
+int main() {
+    Color blue(0, 0, 1);
+    Color red(1, 0, 0);
+
+    Color purple = Color::MixClors(blue, red);
+    cout << "r=" << purple.GetR() << "g=" << purple.GetG() << "b=" << purple.GetB() << endl;
+}
+```
+
+```
+r=0.5g=0b=0.5
+```
+
+
+
+* static member 변수 사용(id)
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class Color {
+public:
+    Color () : r(0), g(0), b(0), id(idCounter++) {}
+    Color (float r, float g, float b) : r(r), g(g), b(b), id(idCounter++) {}
+
+    float GetR() {return r;}
+    float GetG() {return g;}
+    float GetB() {return b;}
+
+    int getId() {return id;}
+
+    static Color MixClors(Color a, Color b) {
+        return Color((a.r + b.r)/2, (a.g + b.g)/2, (a.b + b.b)/2);
+    }
+
+    static int idCounter;
+
+private:
+    float r;
+    float g;
+    float b;
+
+    int id;
+};
+
+int Color::idCounter = 1;
+
+int main() {
+    Color blue(0, 0, 1);
+    Color red(1, 0, 0);
+
+    Color purple = Color::MixClors(blue, red);
+    cout << "r=" << purple.GetR() << "g=" << purple.GetG() << "b=" << purple.GetB() << endl;
+
+    cout << "blue의 id = " << blue.getId() << endl;
+    cout << "red의 id = " << red.getId() << endl;
+    cout << "purple의 id = " << purple.getId() << endl;
+}
+```
+
+```
+r=0.5g=0b=0.5
+blue의 id = 1
+red의 id = 2
+purple의 id = 3
+```
+
+=> 다양한 클래스에 대하여 id 값을 전역변수로 하는 행동보다 클래스 내부에서 static  처리하는 것이 효과적이고 확실하다.
+
+
+
+### const
+
+> 실수 방지를 위하여 접근을 제한 하도록 하는 것
+>
+> 매개변수의 상수화
+>
+> 메서드의 상수화(멤버 메서드)
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class Account {
+public:
+    Account() : money(0) {}
+    Account(int money) : money(money) {}
+
+    void Deposit(const int d) {
+        money += d;
+        cout << d << "원 예금" << endl;
+    }
+
+    void Draw(const int d) {
+        if (money >= d) {
+        	money -= d;
+        	cout << d << "원 인출" << endl;    
+        } 
+    }
+
+    int ViewMoney() const {    // const int ViewMoney() 랑은 다름.
+        return money;
+    }
+
+private:
+    int money;
+};
+
+int main() {
+    Account doodle(200);
+    doodle.Deposit(100);
+    doodle.Draw(20);
+
+    cout << doodle.ViewMoney() << endl;
+}
+```
+
+
+
+### 정적 vs 동적
+
+* 정적인 것은 클래스에 속한 것
+* 동적인 것은 인스턴스로 넘어가는 것
 
 
 
 
 
+### vector
+
+ ```c++
+ # include <iostream>
+ 
+ using namespace std;
+ 
+ 
+ class Vector2 {
+ public:
+     Vector2();
+     Vector2(float x, float y);
+ 
+     float GetX() const; 
+     float GetY() const; 
+ 
+     static Vector2 Sum(Vector2 a, Vector2 b) {    // 정적인 메소드
+         return Vector2(a.x + b.x, a.y + b.y);
+     }
+ 
+     Vector2 Add(Vector2 rhs) {                     // 동적인 메소드
+         return Vector2(x + rhs.x, y + rhs.y);
+     }
+ 
+ 
+ private:
+     float x;
+     float y;
+ 
+ };
+ 
+ 
+ 
+ int main() {
+     Vector2 a(2,3);
+     Vector2 b(-1,4);
+     Vector2 c = Vector2::Sum(a,b);
+     Vector2 d = a.Add(b);
+ 
+     cout << a.GetX() << "," << a.GetY() << endl;
+     cout << b.GetX() << "," << b.GetY() << endl;
+     cout << c.GetX() << "," << c.GetY() << endl;
+     cout << d.GetX() << "," << d.GetY() << endl;
+ }
+ 
+ Vector2::Vector2() : x(0), y(0) {}
+ Vector2::Vector2(float x, float y) : x(x), y(y) {}
+ float Vector2::GetX() const {return x;}
+ float Vector2::GetY() const {return y;}
+ ```
+
+```
+2,3
+-1,4
+1,7
+1,7
+```
+
+
+
+### 연산자 오버라이딩 (operator)
+
+```c++
+# include <iostream>
+
+using namespace std;
+
+class Vector2 {
+public:
+    Vector2();
+    Vector2(float x, float y);
+
+    float GetX() const; 
+    float GetY() const; 
+
+    static Vector2 Sum(Vector2 a, Vector2 b) {
+        return Vector2(a.x + b.x, a.y + b.y);
+    }
+
+    Vector2 Add(Vector2 rhs) {
+        return Vector2(x + rhs.x, y + rhs.y);
+    }
+
+    Vector2 operator+(const Vector2 rhs) const;
+    Vector2 operator-(const Vector2 rhs) const;
+    Vector2 operator*(const float rhs) const;
+    Vector2 operator/(const float rhs) const;
+    float operator*(const Vector2 rhs) const;
+
+private:
+    float x;
+    float y;
+
+};
+
+int main() {
+    Vector2 a(2,3);
+    Vector2 b(-1,4); 
+    Vector2 c = a-b;
+    Vector2 d = a* 1.6;
+    Vector2 e = a/2;
+    Vector2 f = a + b;
+    float g = a * b;
+
+    cout << a.GetX() << "," << a.GetY() << endl;
+    cout << b.GetX() << "," << b.GetY() << endl;
+    cout << c.GetX() << "," << c.GetY() << endl;
+    cout << d.GetX() << "," << d.GetY() << endl;
+    cout << e.GetX() << "," << e.GetY() << endl;
+    cout << f.GetX() << "," << f.GetY() << endl;
+    cout << f.GetX() << "," << f.GetY() << endl;
+    cout << g << endl;
+}
+
+Vector2::Vector2() : x(0), y(0) {}
+Vector2::Vector2(float x, float y) : x(x), y(y) {}
+float Vector2::GetX() const {return x;}
+float Vector2::GetY() const {return y;}
+
+Vector2 Vector2::operator+(const Vector2 rhs) const {
+    return Vector2(x + rhs.x, y + rhs.y);
+    } 
+
+Vector2 Vector2::operator-(const Vector2 rhs) const {
+    return Vector2(x - rhs.x, y - rhs.y);
+}
+
+Vector2 Vector2::operator*(const float rhs) const {
+    return Vector2(x*rhs, y*rhs);
+}
+
+Vector2 Vector2::operator/(const float rhs) const {
+    return Vector2(x/rhs, y/rhs);
+}
+
+float Vector2::operator*(const Vector2 rhs) const {
+    return x*rhs.x + y*rhs.y;
+}
+```
+
+
+
+
+
+
+
+
+
+## 객체 생성 & 소멸
+
+> 생성자는 멤버 변수 초기화
+>
+> 소멸자는 메모리 해제
+>
+> 둘다 default 값이 존재함
+>
+> 괄호, 중괄호 초기화는 차이점이 존재한다. => 나중에 확인
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class MyClass {
+    public:
+    MyClass () { //생성자
+        
+    }
+
+    ~MyClass () { // 소멸자
+        
+    }
+
+};
+```
+
+=> 이런식으로 default 값 존재
+
+
+
+* 생성자, 소멸자도 오바라이딩 가능
+
+```c++
+#include<iostream>
+
+using namespace std;
+
+class Complex {
+public:
+    Complex () {
+        real = 0;
+        image = 0;
+    }
+
+    Complex (int real_, int image_) {
+        real = real_;
+        image = image_;
+    }
+
+    int getReal() {
+        return real;
+    }
+    int getImage() {
+        return image;
+    }
+
+
+private:
+    int real;
+    int image;
+};
+
+
+int main() {
+    Complex c1;
+    Complex c2 = Complex(2,3);
+    Complex c3(5,3);
+
+    cout << "c1 : " << c1.getReal() << ',' << c1.getImage() << endl;
+    cout << "c2 : " << c2.getReal() << ',' << c2.getImage() << endl;
+    cout << "c3 : " << c3.getReal() << ',' << c3.getImage() << endl;
+}
+```
+
+```
+c1 : 0,0
+c2 : 2,3
+c3 : 5,3
+```
+
+
+
+* 다른 방식의 생성자 표현
+
+```c++
+#include<iostream>
+
+using namespace std;
+
+class Complex {
+public:
+    Complex () : real(0), image(0) {}  // 이런식으로도 가능
+
+    Complex (int real, int image) : real(real), image(image) {}   // 멤버변수와 같게 해줘도 상관없음
+
+    int getReal() {
+        return real;
+    }
+    int getImage() {
+        return image;
+    }
+
+private:
+    int real;
+    int image;
+};
+```
+
+
+
+### 생성자
+
+> 객체가 생성될 때 자동으로 호출되는 함수
+
+
+
+* 생성자 위임
+
+> 같은 부분이 존재하는 생성자들을 간단하게 표현하기 위한 방법
+
+``` c++
+#include <iostream>
+
+using namespace std;
+
+class Time {
+public:
+    Time() :h(0), m(0), s(0) {}
+
+    Time (int s_) : Time() {
+        s = s_;
+    }
+
+    Time (int s_, int m_) : Time(s_) {
+        m = m_;
+    }
+
+    Time (int s_, int m_, int h_) : Time(s_, m_) {
+        h = h_;
+    }
+
+    int h;
+    int m;
+    int s;
+};
+
+int main() {
+    Time t1;
+    Time t2(5);
+    Time t3(3, 16);
+    Time t4(2, 42, 15);
+
+    cout << "t1 : " << t1.h << ":" << t1.m << ":" << t1.s << endl;
+    cout << "t2 : " << t2.h << ":" << t2.m << ":" << t2.s << endl;
+    cout << "t3 : " << t3.h << ":" << t3.m << ":" << t3.s << endl;
+    cout << "t4 : " << t4.h << ":" << t4.m << ":" << t4.s << endl;
+}
+```
+
+```
+t1 : 0:0:0
+t2 : 0:0:5
+t3 : 0:16:3
+t4 : 15:42:2
+```
+
+
+
+
+
+### 소멸자
+
+> 객체가 소멸될 때 자동으로 호출되는 함수
+
+
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class MyClass {
+    public:
+    MyClass () { //생성자
+        cout << "생성자가 호출" << endl;
+    }
+
+    ~MyClass () { // 소멸자
+        cout << "생성자가 소멸" << endl;
+    }
+
+};
+
+MyClass globalObj;
+
+void testLocalObj () {
+    cout << "testLocalObj 함수 시작" << endl;
+    MyClass localObj;
+    cout << "testLocalObj 함수 끝" << endl;
+}
+
+int main () {
+    cout << "main 함수 시작" << endl;
+    testLocalObj();
+    cout << "main 함수 끝" << endl;
+}
+```
+
+```
+생성자가 호출
+main 함수 시작
+testLocalObj 함수 시작
+생성자가 호출
+testLocalObj 함수 끝
+생성자가 소멸
+main 함수 끝
+생성자가 소멸
+```
 
 
 
