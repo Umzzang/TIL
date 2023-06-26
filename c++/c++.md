@@ -502,7 +502,7 @@ int main()
 
 > 단일 표현식 이후에 더 이상 존재하지 않는 임시적인 값
 >
-> 3, string("one"),x+y,&x, x++, 함수값
+> 3, string("one"),x+y,&x, x++, 함수값, 임시 객체()
 
 
 
@@ -720,6 +720,8 @@ int main() {
 
 
 
+#### 범위지정 for 문에 동적할당된 배열은 사용하지 못한다 => 정확한 길이를 모르기 때문에
+
 
 
 
@@ -923,6 +925,130 @@ int main() {
 ```
 
 => 숨겨진 변수의 주소가 매개변수로 주어지게 됨.
+
+
+
+* **멤버변수명과 매개변수명이 같을 때, 어떻게 구별할까???**
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class GameWindow {
+public:
+    void ResizeWindow(int, int); 
+    
+private:
+    int w;
+    int h;
+};
+
+int GameWindow::GetW() {return w;}
+int GameWindow::GetH() {return h;}
+
+void GameWindow::ResizeWindow(int w, int h) {
+    if ( w < 800) w = 800;
+    else .w = w;
+    if ( h < 600) h = 600;
+    else h = h;
+}
+
+int main() {
+    GameWindow mainWindow;
+    mainWindow.ResizeWindow(1366,768);
+
+    cout << mainWindow.GetW() << ", " << mainWindow.GetH() << endl;
+}
+```
+
+=> 이럴 경우 w, h 모두를 ResizeWindow 안에서 매개변수로 인식하게 됨.
+
+```
+800, 600
+```
+
+
+
+* (*this).
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class GameWindow {
+public:
+    void ResizeWindow(int, int); 
+    
+private:
+    int w;
+    int h;
+};
+
+int GameWindow::GetW() {return w;}
+int GameWindow::GetH() {return h;}
+
+void GameWindow::ResizeWindow(int w, int h) {
+    if ( (*this).w < 800) (*this).w = 800;
+    else (*this).w = w;
+    if ( (*this).h < 600) (*this).h = 600;
+    else (*this).h = h;
+}
+
+int main() {
+    GameWindow mainWindow;
+    mainWindow.ResizeWindow(1366,768);
+
+    cout << mainWindow.GetW() << ", " << mainWindow.GetH() << endl;
+}
+```
+
+* this->
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class GameWindow {
+public:
+    void ResizeWindow(int, int); 
+    
+private:
+    int w;
+    int h;
+};
+
+int GameWindow::GetW() {return w;}
+int GameWindow::GetH() {return h;}
+
+void GameWindow::ResizeWindow(int w, int h) {
+    if ( this->w < 800) this->w = 800;
+    else this->w = w;
+    if ( this->h < 600) this->h = 600;
+    else this->h = h;
+}
+
+int main() {
+    GameWindow mainWindow;
+    mainWindow.ResizeWindow(1366,768);
+
+    cout << mainWindow.GetW() << ", " << mainWindow.GetH() << endl;
+}
+```
+
+```
+1366, 768
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -1151,7 +1277,6 @@ int main() {
  private:
      float x;
      float y;
- 
  };
  
  
@@ -1262,6 +1387,67 @@ float Vector2::operator*(const Vector2 rhs) const {
     return x*rhs.x + y*rhs.y;
 }
 ```
+
+
+
+###  class 문제
+
+```c++
+#include <iostream>
+
+using  namespace std;
+
+class MyClass {
+public:
+    MyClass() : num(cnt++) {}
+
+    void Check(MyClass *ptr) {
+        if (ptr + num == this) {
+            cout << num << endl;
+
+        }
+    }
+    static int cnt;
+
+private:
+    int num;
+};
+
+int MyClass::cnt = 0;
+
+int main () {
+    MyClass obj[5];
+
+    cout << "TEST 1" << endl;
+
+    for (int i = 0; i< 5; i++) {
+        obj[i].Check(obj);
+    }
+    cout << "TEST 2" << endl;
+    for (MyClass &i : obj) {
+        i.Check(obj);
+    }
+    cout << MyClass::cnt << endl;
+}
+```
+
+```
+TEST 1
+0
+1
+2
+3
+4
+TEST 2
+0
+1
+2
+3
+4
+5
+```
+
+
 
 
 
@@ -1496,9 +1682,737 @@ main 함수 끝
 
 
 
+## 동적 할당 & 객체 복사
+
+> 정적 할당은 컴파일 단계, 동적 할당은 런타임중에 일어난다.
+
+### 정적 할당
+
+> int a;
+
+  
+
+### 동적 할당
+
+> 프로그램 실행 중에 변수를 메모리에 할당하는 것
 
 
 
+```c++
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int *a = new int(5);
+
+    cout << a << endl;
+    cout << *a << endl;
+
+    *a = 10;
+
+    cout << a << endl;
+    cout << *a << endl;
+
+    //delete a;
+
+    cout << a << endl;
+    cout << *a << endl;
+}
+```
+
+```
+0x691750
+5
+0x691750
+10
+0x691750
+10
+```
+
+```
+//delete a 했을 때
+0xe61750
+5
+0xe61750
+10
+0xe61750
+15080128
+```
+
+
+
+
+
+* 배열 동적 할당
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int *arr;
+    int len;
+
+    cout << "길이:";
+    cin >> len;
+
+    arr = new int[len];
+    for (int i = 0; i < len; i++) {
+        arr[i] = len - i;
+    }
+    for (int i = 0; i < len; i++) {
+        cout << arr[i] << endl;
+    }
+    cout<< arr[0] << endl;
+    cout<< arr << endl;
+    cout<< *arr << endl;
+    delete[] arr;                  // 배열 메모리 해제는 반드시 delete 뒤에 [] 붙어야함.
+    cout<< arr[0] << endl;
+    cout<< arr << endl;
+    cout<< *arr << endl;
+}
+```
+
+```
+길이:3
+3
+2
+1
+3
+0xf31750
+3
+15932096
+0xf31750
+15932096
+```
+
+
+
+* 객체
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+class Vector2 {
+public:
+    Vector2() : x(0), y(0) {
+        cout << this << " : Vector2()" << endl;
+    }
+
+    Vector2(const float x , const float y) : x(x), y(y) {
+        cout << this << " : Vector2(const float x , const float y)" << endl;
+    }
+
+    ~Vector2() {
+        cout << this << " : Vector2()" << endl;
+    }
+
+    float GetX() const {return x;}
+    float GetY() const {return y;}
+
+private:
+    float x;
+    float y;
+};
+
+int main() {
+    Vector2 s1 = Vector2();
+    Vector2 s2 = Vector2(3,2);
+
+    Vector2 *d1 = new Vector2();
+    Vector2 *d2 = new Vector2(3,2);
+
+    cout << "(" << d1->GetX() << "," << d1->GetY() << ")" << endl;
+    cout << "(" << d2->GetX() << "," << d2->GetY() << ")" << endl;
+
+    delete d1;
+    delete d2;
+}
+```
+
+```
+0x61fdf8 : Vector2()
+0x61fdf0 : Vector2(const float x , const float y)
+0xde1750 : Vector2()
+0xde1770 : Vector2(const float x , const float y)
+(0,0)
+(3,2)
+0xde1750 : Vector2()
+0xde1770 : Vector2()
+0x61fdf0 : Vector2()
+0x61fdf8 : Vector2()
+```
+
+
+
+
+
+### 깊은복사 & 얕은 복사
+
+> 깊은 복사는 '값' 을 복사 => 즉, 여러개의 주소가 필요
+>
+> 얕은 복사는 '주소'를 복사
+
+
+
+
+
+```c++
+int main() {
+    int *a = new int(5);
+    int *b = new int(3);
+    
+    a = b;    //얕은 복사 (참조를 복사)
+    
+    delete a;
+    delete b;
+}
+```
+
+![image-20230626083547817](C:\Users\티로보틱스\AppData\Roaming\Typora\typora-user-images\image-20230626083547817.png)
+
+* 100번지 주소가 해제되지 않음
+* delete a 후에 delete b를 하면 에러 발생 (이미 delete 된 주소를 또 delete할 수 없음.)
+
+* 아래처럼 해야함
+
+```c++
+int main() {
+    int *a = new int(5);
+    int *b = new int(3);
+    
+    *a = *b;   // 깊은 복사 (값을 복사)
+    
+    delete a;
+    delete b;
+}
+```
+
+
+
+
+
+#### #######\<cstring> vs \<string> #########
+
+> cstring은 c언어에서 string.h 헤더 파일을 c++형태로 바꾼것 이라고 생각
+>
+> string  은 기존 cstring의  불편한점 을 개선하기 위하여 탄생한 것
+
+
+
+1. Flexible storage capacity
+   * 매번 사이즈 선언 필요없음
+   * 파이썬처럼 좀더 자유로움
+2. No need to worry about memory
+   * 메모리 걱정 ㄴ, 문자열 재할당 할 필요도 없음
+
+3. Boundary issues are handled for me, with or without a null character
+4. using = operator rather than strcpy
+5. using == operator rather than strcmp
+
+```c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class String {
+public:
+    String() {
+        strData = NULL;
+        len = 0;
+    }
+
+    String(const char *str) {
+        len = strlen(str);      // 길이를 미리 알아야함
+        strData = new char[len + 1];     // \0이 마지막에 들어가기 때문에 실제 길이보다 +1해서 할당
+        strcpy(strData, str);
+    }
+    
+    ~String() {
+        delete[] strData;
+    }
+
+private:
+    char *strData;
+    int len;
+};
+```
+
+* \<string> 사용
+
+```c++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class String {
+public:
+    String() {
+        strData = NULL;
+        len = 0;
+    }
+
+    String(const char *str) {
+        strData = str;
+
+    }
+    
+    ~String() {
+        delete[] strData;
+    }
+
+private:
+    const char *strData;
+    int len;
+};
+```
+
+
+
+
+
+
+
+### 복사 생성자 오버라이딩
+
+ ```c++
+ #include <iostream>
+ #include <cstring>
+ 
+ using namespace std;
+ 
+ class String {
+ private:
+     char * strData;
+     int len;
+ public:
+     String() {
+         cout << "String() 생성자 호출" << endl;
+         strData = NULL;
+         len = 0;
+     }
+ 
+     String(const char *str) {
+         cout << "String(const char*) 생성자 호출" << endl;
+         len = strlen(str);
+         strData = new char[len + 1];
+         cout << "strData 할당:" << (void*)strData << endl;
+         strcpy(strData, str); //깊은 복사
+     }
+     
+     ~String() {
+         cout << "~String() 소멸자 호출" << endl;
+         delete[] strData;
+         cout << "strData 해제됨:" << (void*)strData << endl;
+         strData = NULL; // 해제된 메모리에 대한 접근을 막기위해서 하지만, 임시방편
+     }
+ 
+     char *GetStrData() const {
+         return strData;
+     }
+     int GetLen() const {
+         return len;
+     }
+ };
+ 
+ 
+ int main() {
+     String s1("안녕");
+     String s2(s1);   // 복사 생성자
+ 
+     cout << s1.GetStrData() << endl;
+     cout << s2.GetStrData() << endl;
+ }
+ ```
+
+```
+String(const char*) 생성자 호출
+strData 할당:0x651770
+안녕
+안녕
+~String() 소멸자 호출
+strData 해제됨:0x651770
+~String() 소멸자 호출
+```
+
+=> 생성자 호출 한번만 됨
+
+=> strData에 할당 한번만 됨
+
+=> 얕은 복사가 일어남.
+
+
+
+```c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class String {
+private:
+    char * strData;
+    int len;
+public:
+    String() {
+        cout << "String() 생성자 호출" << endl;
+        strData = NULL;
+        len = 0;
+    }
+
+    String(const char *str) {
+        cout << "String(const char*) 생성자 호출" << endl;
+        len = strlen(str);
+        strData = new char[len + 1];
+        cout << "strData 할당:" << (void*)strData << endl;
+        strcpy(strData, str); //깊은 복사
+    }
+
+    // String(String &rhs) {    //복사생성자 :  복사 생성자의 경우, 같은 클래스의 객체를 복사하기 때문에 참조로 넣어주어야 함.
+    //     strData = rhs.strData;   // strData는 포인터이기 때문에  => 얕은복사
+    //     len = rhs.len;     // int이기 때문에 다른 len임 => 깊은복사
+    // }
+
+    String(const String &rhs) {    // 복사하는 값이 변하면 안되기 때문에 const 박자
+        cout << "String(const &rhs) 생성자 호출" << endl;
+        strData = new char[rhs.len + 1];
+        cout << "strData 할당:" << (void*)strData << endl;
+        strcpy(strData, rhs.strData); //깊은 복사
+        len = rhs.len;
+    }
+    
+    ~String() {
+        cout << "~String() 소멸자 호출" << endl;
+        delete[] strData;
+        cout << "strData 해제됨:" << (void*)strData << endl;
+        strData = NULL; // 해제된 메모리에 대한 접근을 막기위해서 하지만, 임시방편
+    }
+
+    char *GetStrData() const {
+        return strData;
+    }
+    int GetLen() const {
+        return len;
+    }
+};
+
+
+int main() {
+    String s1("안녕");
+    String s2(s1);   // 복사 생성자
+
+    cout << s1.GetStrData() << endl;
+    cout << s2.GetStrData() << endl;
+}
+```
+
+```
+String(const char*) 생성자 호출
+strData 할당:0xee1770
+String(const &rhs) 생성자 호출
+strData 할당:0xee1790
+안녕
+안녕
+~String() 소멸자 호출
+strData 해제됨:0xee1790
+~String() 소멸자 호출
+strData 해제됨:0xee1770
+```
+
+=> 깊은 복사로 실행됨
+
+
+
+
+
+#### #######void*#######
+
+> 단순히 주소값만 저장하는 포인터
+>
+> 어떤 자료형인지 몇바이튼지에 대한 정보는 없음
+>
+> 따라서 수정 불가
+
+```c++
+char *strData;
+
+// 1.
+char *ptr = strData;
+*ptr = 'A'; // 가능
+
+// 2.
+void *ptr = strData;
+*ptr = 'A'; // 불가능
+```
+
+
+
+
+
+### 대입 연산자 오버로딩
+
+> 선언과 동시에 값을 넣는 것이아니라 
+>
+> 선언 후에 값을 넣을 때는 복사 생성자로 불가능 => 연산자 오버로딩
+
+```c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class String {
+private:
+    char * strData;
+    int len;
+public:
+    String() {
+        cout << "String() 생성자 호출" << endl;
+        strData = NULL;
+        len = 0;
+    }
+
+    String(const char *str) {
+        cout << "String(const char*) 생성자 호출" << endl;
+        len = strlen(str);
+        strData = new char[len + 1];
+        cout << "strData 할당:" << (void*)strData << endl;
+        strcpy(strData, str); //깊은 복사
+    }
+
+    // String(String &rhs) {    //복사생성자 :  복사 생성자의 경우, 같은 클래스의 객체를 복사하기 때문에 참조로 넣어주어야 함.
+    //     strData = rhs.strData;   // strData는 포인터이기 때문에  => 얕은복사
+    //     len = rhs.len;     // int이기 때문에 다른 len임 => 깊은복사
+    // }
+
+    String(const String &rhs) {
+        cout << "String(const &rhs) 생성자 호출" << endl;
+        strData = new char[rhs.len + 1];
+        cout << "strData 할당:" << (void*)strData << endl;
+        strcpy(strData, rhs.strData); //깊은 복사
+        len = rhs.len;
+    }
+    
+    ~String() {
+        cout << "~String() 소멸자 호출" << endl;
+        delete[] strData;
+        cout << "strData 해제됨:" << (void*)strData << endl;
+        strData = NULL; // 해제된 메모리에 대한 접근을 막기위해서 하지만, 임시방편
+    }
+
+    String &operator=(const String &rhs) {   // 참조를 하지 않게 되면 새로운 String  객체를 생성하고 그것을 대입하는 형식으로 진행됨
+        // operator 결과값도 reference로, 아니면 또 새로운 String 복사 일어남
+        if (this != &rhs) {   // &rhs는 위의 &rhs와 다르다 . 이줄은 주소를 나타냄 => 자기 자신을 대입하는 경우 방지하기 위하여 분기처리
+        delete[] strData;
+        strData = new char[rhs.len + 1];
+        cout << "strData 할당:" << (void*)strData << endl;
+        strcpy(strData, rhs.strData);
+        len = rhs.len;
+        }
+        return *this;        // rhs 는 const string 이기 때문에 return할 수없음 => *this는 객체가 속해있는 주소값 => 객체 자체를 반환
+    }
+
+    char *GetStrData() const {
+        return strData;
+    }
+    int GetLen() const {
+        return len;
+    }
+};
+
+
+int main() {
+    String s1("안녕");
+    String s2(s1);   // 복사 생성자
+    String s3("Hello");
+    s3 = s1;
+
+    cout << s1.GetStrData() << endl;
+    cout << s2.GetStrData() << endl;
+    cout << s3.GetStrData() << endl;
+}
+```
+
+```
+String(const char*) 생성자 호출
+strData 할당:0x721770
+String(const &rhs) 생성자 호출
+strData 할당:0x721790
+String(const char*) 생성자 호출
+strData 할당:0x721ae0
+Hello
+strData 할당:0x721ae0
+안녕
+안녕
+안녕
+~String() 소멸자 호출
+strData 해제됨:0x721ae0
+~String() 소멸자 호출
+strData 해제됨:0x721790
+~String() 소멸자 호출
+strData 해제됨:0x721770
+```
+
+
+
+
+
+### 임시 객체
+
+```c++
+String getName() {
+    String res("doodle");
+    return res;
+}
+
+int main() {
+    String a;
+    a = getName();
+}
+```
+
+=> 위와 같은 코드를 작성할 때,  getName()은 res를 리턴하지만 결국 getName이 리턴 될때 함수가 종료되므로 res는 메모리상에서 소멸된다.
+
+=> 그렇다면 a에 반환되는 값은 무엇인가??
+
+=> 임시 객체
+
+=> a에 임시 객체가 넘어가면 임시객체 소멸
+
+#### 결론적으로 깊은복사가 2번일어남, 불필요한 깊은복사 2번
+
+#### => 소멸자가 한번만 일어나도록 얕은복사를 이용
+
+
+
+### 이동 시멘틱
+
+> 깊은 복사 2번을 없애고 얕은 복사로 효율을 높이기 위한 방법
+>
+> 이동 생성자 & 이동 대입연산자 
+
+
+
+#### 임시 객체는 r-value!! => &&(rvalue 참조자) 로 참조 가능
+
+
+
+``` c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class String {
+private:
+    char * strData;
+    int len;
+
+    void alloc(int len) {
+        strData = new char[len+1];
+        cout << "strData allocated : " << (void*)strData << endl;
+    }
+    
+    void release() {
+        delete[] strData;
+        cout << "strData released : " << (void*)strData << endl;
+    }
+
+
+public:
+    String() {
+        cout << "String() 생성자 호출 " << this <<  endl;
+        strData = NULL;
+        len = 0;
+    }
+
+    String(const char *str) {
+        cout << "String(const char*) 생성자 호출 " << this <<  endl;
+        len = strlen(str);
+        alloc(len);
+        strcpy(strData, str); //깊은 복사
+    }
+
+    // String(String &rhs) {    //복사생성자 :  복사 생성자의 경우, 같은 클래스의 객체를 복사하기 때문에 참조로 넣어주어야 함.
+    //     strData = rhs.strData;   // strData는 포인터이기 때문에  => 얕은복사
+    //     len = rhs.len;     // int이기 때문에 다른 len임 => 깊은복사
+    // }
+
+    String(const String &rhs) {
+        cout << "String(const string&) 생성자 호출 " << this << endl;
+        alloc(rhs.len);
+        strcpy(strData, rhs.strData); //깊은 복사
+        len = rhs.len;
+    }
+
+    String(String &&rhs) {   //  매개변수가 rvalue
+        cout << "String(String&&) : " << this << endl;
+        len = rhs.len;
+        strData = rhs.strData;
+        rhs.strData = NULL;
+    }
+    
+    ~String() {
+        cout << "~String() 소멸자 호출 " << this <<  endl;
+        release();
+        strData = NULL; // 해제된 메모리에 대한 접근을 막기위해서 하지만, 임시방편
+    }
+
+    String &operator=(const String &rhs) {   // 참조를 하지 않게 되면 새로운 String  객체를 생성하고 그것을 대입하는 형식으로 진행됨
+        // operator 결과값도 reference로, 아니면 또 새로운 String 복사 일어남
+        cout << "String &operator=(const String&) : " << this << endl;
+        if (this != &rhs) {   // &rhs는 위의 &rhs와 다르다 . 이줄은 주소를 나타냄 => 자기 자신을 대입하는 경우 방지하기 위하여 분기처리
+            release();
+            alloc(rhs.len);
+            strcpy(strData, rhs.strData);
+            len = rhs.len;
+        }
+        return *this;        // rhs 는 const string 이기 때문에 return할 수없음 => *this는 객체가 속해있는 주소값 => 객체 자체를 반환
+    }
+
+    String &operator=(String &&rhs) {
+        cout << "String &operator=(String&&) : " << this << endl;
+        len = rhs.len;
+        strData = rhs.strData;
+        rhs.strData = NULL;
+        return *this;
+    }
+
+    char *GetStrData() const {
+        return strData;
+    }
+    int GetLen() const {
+        return len;
+    }
+
+    void SetStrData(const char *str) {
+        cout << "void SetStrData(const char*) : " << this << ", " << str <<endl;
+        len = strlen(str);
+        alloc(len);
+        strcpy(strData, str);
+    }
+};
+
+String getName() {
+    cout << "====2====" << endl;
+    String res("Doodle");
+    cout << "====3====" << endl;
+    return res;
+}
+
+int main() {
+    String a;
+    cout << "====1====" << endl;
+    a = getName();
+    cout << "====4====" << endl;
+}
+```
 
 
 

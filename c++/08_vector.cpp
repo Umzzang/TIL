@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 class Vector2 {
 public:
     Vector2();
@@ -25,15 +24,11 @@ public:
     Vector2 operator/(const float rhs) const;
     float operator*(const Vector2 rhs) const;
 
-
-
 private:
     float x;
     float y;
 
 };
-
-
 
 int main() {
     Vector2 a(2,3);
@@ -78,6 +73,3 @@ Vector2 Vector2::operator/(const float rhs) const {
 float Vector2::operator*(const Vector2 rhs) const {
     return x*rhs.x + y*rhs.y;
 }
-
-
-
